@@ -12,9 +12,7 @@ public class index {
     ArrayList<String> names = saveNames(scanner);
     HashMap<String, String> hints = saveWords();
 
-    System.out.println(saveNames(scanner));
-    saveWords();
-    printWordHint(hints, "cat");
+    printWordHint(hints, "[ ] [ ] [ ]");
 
     }
 
@@ -45,12 +43,10 @@ public class index {
         return names;
     }
 
-
-
     public static HashMap<String, String> saveWords() {
         HashMap<String, String> hints = new HashMap<>();
 
-        hints.put("cat", "meow");
+        hints.put("[ ] [ ] [ ]", "This object can meow.");
         hints.put("dog", "bark");
         hints.put("bird", "chirik");
 
@@ -58,9 +54,15 @@ public class index {
     }
 
     public static void printWordHint(HashMap<String, String> hints, String keyToPrint) {
+        cleanConsole();
         if (hints.containsKey(keyToPrint)) {
-            System.out.println("Word: " + keyToPrint);
-            System.out.println("Des: " + hints.get(keyToPrint));
+            System.out.println(" \u001B[31m                        =====================================");
+            System.out.println("                                                                        ");
+            System.out.println("                                      "+keyToPrint+"             ");
+            System.out.println("                                 "+hints.get(keyToPrint)+"      ");
+            System.out.println("                                                            ");
+            System.out.println("                         =====================================\u001B[0m" +"\n");
+
         } else {
             System.out.println("Invalid.");
         }
