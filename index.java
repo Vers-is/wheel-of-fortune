@@ -1,4 +1,5 @@
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Scanner;
 
@@ -11,6 +12,8 @@ public class index {
         ArrayList<String> names = saveNames(scanner);
 
         printWordHint(hints, "Bread");
+        startGuessingCycle(names, scanner);
+        
     }
 
     // field
@@ -28,19 +31,24 @@ public class index {
 
         ArrayList<String> names = new ArrayList<>();
         
-        while(true) {
-            String name = scanner.nextLine();
-
-            if(!name.equals("done")) {
-                names.add(name);
-            } else {
-                break;
+            while(true) {
+                String toScan = scanner.nextLine().trim().toLowerCase();
+                String firstLetter = toScan.substring(0, 1).toUpperCase();
+                String lastLetters = toScan.substring(1);
+                String name = firstLetter + lastLetters; 
+                
+                if (!names.contains(name)){
+                    if(!name.equals("Done")) names.add(name);
+                    else break;
+                }
+                
             } 
-        } 
+            Collections.shuffle(names);
+            
         return names;
     }
-
-    public static HashMap<String, String> saveWords() {
+            
+    public static HashMap<String, String> saveWords() { 
         HashMap<String, String> hints = new HashMap<>();
 
         hints.put("Cat", "Pet with whiskers and fluffy ears");
@@ -57,41 +65,29 @@ public class index {
         return hints;
     }
 
-    // Custom method to create padding spaces
-    public static String createPadding(int length) { 
-        StringBuilder padding = new StringBuilder();
-        for (int i = 0; i < length; i++) {
-            padding.append(" ");
-        }
-        return padding.toString();
-    }
-
-    // Updated centerText method to use createPadding instead of .repeat()
-    public static String centerText(String text, int width) {
-        int padding = (width - text.length()) / 2;
-        return createPadding(padding) + text;
-    }
-
     // Updated printWordHint method to use centerText for centering output
     public static void printWordHint(HashMap<String, String> hints, String keyToPrint) {
         cleanConsole();
-        int terminalWidth = 80; // Adjust this width based on your terminal's width
-    
-        if (hints.containsKey(keyToPrint)) {
-            String separator = "====================================";
-            String title = keyToPrint;
-            String description = hints.get(keyToPrint);
-    
-            System.out.println("\u001B[31m" + centerText(separator, terminalWidth));
-            System.out.println();
-            System.out.println(centerText(title, terminalWidth));
-            System.out.println(centerText(description, terminalWidth));
-            System.out.println();
-            System.out.println(centerText(separator, terminalWidth) + "\u001B[0m" + "\n");
-    
-        } else {
-            System.out.println("Invalid.");
-        }
+        String separator = "============================================= \n";
+        String colorStart = "\u001B[31m";
+        String colorEnd = "\u001B[0m";
+        System.out.println(colorStart + separator);
+
+        String value = hints.get(keyToPrint);
+        System.out.println(keyToPrint + "\n" + value);
+
+        System.out.println("\n"+ separator + colorEnd);
     }
     
-}    
+    public static void startGuessingCycle(ArrayList<String> players, Scanner scanner) {
+        int playerIndex = 0; 
+
+        while (true) {
+            String currentPlayer = players.get(playerIndex);
+            System.out.print(currentPlayer + ", please guess a letter: \n");
+            String letter = scanner.nextLine().trim().toLowerCase();
+
+            playerIndex = (playerIndex + 1) % players.size();  
+        }
+    }
+}
