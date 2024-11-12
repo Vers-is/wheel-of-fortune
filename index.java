@@ -8,7 +8,7 @@ public class index {
             
         hints = saveWords();
         ArrayList<String> names = saveNames(scanner);
-        startGuessingCycle(names, scanner);
+        playerGuess(names, scanner);
     }
 
     // field
@@ -47,23 +47,66 @@ public class index {
     public static HashMap<String, String> saveWords() { // LIST OF WORDS
         HashMap<String, String> hints = new HashMap<>();
     
-        hints.put("Cat", "Pet with whiskers and fluffy ears");
-        hints.put("Bread", "A baked staple food made\n" + //
+        hints.put("CAT", "Pet with whiskers\n" + 
+                        "| and fluffy ears.");
+
+        hints.put("BREAD", "A baked staple food made\n" + 
                         "| from flour and water.");
-        hints.put("Rabbit", "A small mammal with long ears\n" + //
+
+        hints.put("RABBIT", "A small mammal with long ears\n" + 
                         "| and strong hind legs.");
-        hints.put("Mother", "A female parent");
-        hints.put("Hair", "Grow from the skin, mainly on the head.");
-        hints.put("Jacket", "Cloth worn for warmth");
-        hints.put("Eye", "The organ for vision");
-        hints.put("Lightning", "A bright electrical\n" + //
+
+        hints.put("MOTHER", "A female parent.");
+
+        hints.put("HAIR", "Grow from the skin,\n" + 
+                        "| mainly on the head.");
+
+        hints.put("JACKET", "Cloth worn for warmth.");
+
+        hints.put("EYE", "The organ for vision.");
+
+        hints.put("LIGHTENING", "A bright electrical\n" + 
                         "| discharge seen during storms.");
-        hints.put("Leg", "A part of body used for standing and walking");
-        hints.put("Infinity", "A concept representing endlessness.");
-        hints.put("Limit", "A boundary or point beyond which\n" + //
+
+        hints.put("LEG", "A part of body used\n" + 
+                        "| for standing and walking.");
+
+        hints.put("INFINITY", "A concept representing\n" + 
+                        "| endlessness.");
+
+        hints.put("LIMIT", "A boundary or point beyond which\n" + 
                         "| something does not extend.");
         return hints;
     }
+
+    public static ArrayList<String> saveWordsList() {
+        ArrayList<String> wordList = new ArrayList<>();
+        
+        wordList.add("CAT");
+        wordList.add("BREAD");
+        wordList.add("RABBIT");
+        wordList.add("MOTHER");
+        wordList.add("HAIR");
+        wordList.add("JACKET");
+        wordList.add("EYE");
+        wordList.add("LIGHTENING");
+        wordList.add("LEG");
+        wordList.add("INFINITY");
+        wordList.add("LIMIT");
+        
+        Collections.shuffle(wordList); 
+        
+        return wordList;
+    }
+
+    public static String hideWord(String word) {
+        StringBuilder hiddenWord = new StringBuilder();
+        for (int i = 0; i < word.length(); i++) {
+            hiddenWord.append("[ ]");
+        }
+        return hiddenWord.toString(); 
+    }
+    
     
     public static void printWordHint(HashMap<String, String> hints, String keyToPrint) { // PRINT BOARD
         String separator = "+-------------------------";
@@ -71,11 +114,12 @@ public class index {
         String colorEnd = "\u001B[0m";
         System.out.println(colorStart + separator);
         String value = hints.get(keyToPrint);
-        System.out.println("| "+ keyToPrint + "\n| " + value);
+        String hiddenWord = hideWord(keyToPrint); 
+        System.out.println("| "+ hiddenWord + "\n| " + value);
         System.out.println(separator + colorEnd);
     }
     
-    public static void checkAnswer(String name){
+    public static void checkAnswer(String name){ // EDIT
         int letter = 20;
         int word = 60;
         int score = 0;
@@ -83,17 +127,23 @@ public class index {
         System.out.println("\u001B[33m>>> " + name + "'s score: " + score + "\u001B[0m");
     }
     
-    public static void startGuessingCycle(ArrayList<String> players, Scanner scanner) { // PLAYER GUESS
+    public static void playerGuess(ArrayList<String> players, Scanner scanner) { // PLAYER GUESS
         int playerIndex = 0; 
+        ArrayList<String> wordList = saveWordsList(); 
+        int wordIndex = 0;
     
         while (true) {
-            cleanConsole();
+            if (wordIndex >= wordList.size()) {
+                System.out.println("All words have been guessed!");
+                break;  
+            }
+            cleanConsole(); // CLEAN
             String currentPlayer = players.get(playerIndex);
-            printWordHint(hints, "Bread"); // (EDIT) BOARD
+            String currentWord = wordList.get(wordIndex);
+            printWordHint(hints, currentWord); // (EDIT) BOARD
             checkAnswer(currentPlayer); // SCORE
             System.out.print("\u001B[32m" + currentPlayer + "'s\u001B[0m" + " turn! Guess a letter: "); //ASK LETTER
-            String letter = scanner.nextLine().trim().toLowerCase();
-            cleanConsole(); // CLEAN
+            String letter = scanner.nextLine().trim().toUpperCase();
             playerIndex = (playerIndex + 1) % players.size();  
         }
     }
